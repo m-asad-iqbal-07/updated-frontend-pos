@@ -15,6 +15,8 @@ export interface Category {
     description: string | null;
     display_order: number;
     is_active: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface MenuItem {
@@ -27,6 +29,8 @@ export interface MenuItem {
     image_url: string | null;
     is_available: boolean;
     stock_qty: number;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface Addon {
@@ -34,15 +38,19 @@ export interface Addon {
     name: string;
     price: number;
     is_available: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface Customer {
     id: number;
     name: string;
-    phone: string;
-    email: string;
+    phone: string | null;
+    email: string | null;
     total_orders: number;
     total_spent: number;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface Discount {
@@ -51,6 +59,10 @@ export interface Discount {
     type: 'percentage' | 'flat';
     value: number;
     is_active: boolean;
+    start_date: string | null;
+    end_date: string | null;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface OrderItemAddon {

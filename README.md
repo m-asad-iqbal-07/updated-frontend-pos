@@ -1,149 +1,148 @@
-# Philo Coffee Shop — POS Dashboard (Frontend)
+# Philo Coffee Shop — POS System
 
-A **product-grade Point-of-Sale dashboard** built with React + Vite + TypeScript, featuring real-time analytics, order management, inventory alerts, and a full POS register workflow.
-
----
-
-## Tech Stack
-
-| | |
-|---|---|
-| **Framework** | React 18 + TypeScript |
-| **Build Tool** | Vite 5 |
-| **Routing** | React Router 6 |
-| **Data Fetching** | TanStack React Query 5 |
-| **Charts** | Recharts |
-| **Styling** | Vanilla CSS (CSS variables design system) |
-| **Icons** | Lucide React |
-| **Testing** | Vitest + @testing-library/react |
+A full-featured **Point of Sale** web application for Philo Coffee Shop. Built with **React + Vite + TypeScript** on the frontend and **FastAPI + SQLite** on the backend.
 
 ---
 
-## Prerequisites
+## ✨ Features
 
-- **Node.js** v18+
-- **Philo Backend** running on `http://localhost:8000`
-
-> To start the backend, from the repo root run:
-> ```bash
-> # Install uv if needed
-> powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-> $env:Path = "C:\Users\$env:USERNAME\.local\bin;$env:Path"
-> 
-> cd <backend-folder>
-> uv run python main.py
-> ```
+| Module | Description |
+|--------|-------------|
+| **Dashboard** | KPI summary, revenue charts, top items, payment breakdown, inventory alerts |
+| **POS Register** | Menu browsing, cart, add-ons, customer/discount selection, order placement |
+| **Orders** | Paginated order list with status filters, order detail view, status updates |
+| **Menu Management** | Full CRUD for Categories, Menu Items, and Add-ons |
+| **Customers** | Full CRUD for customers with per-customer order history |
+| **Discounts** | Full CRUD for percentage and flat-rate discounts |
+| **Shifts** | Open/close cashier shifts, shift revenue & expense summary |
+| **Expenses** | Record and manage business expenses by category |
 
 ---
 
-## Setup & Run Locally
+## 🛠 Tech Stack
+
+- **Frontend:** React 18, TypeScript, Vite, TanStack Query, Axios, Lucide Icons
+- **Backend:** FastAPI, SQLAlchemy, SQLite, Alembic (migrations)
+- **Styling:** Vanilla CSS with CSS custom properties (themes)
+
+---
+
+## 🚀 Quick Start
+
+### 1. Backend Setup
 
 ```bash
-# 1. Navigate to the frontend folder
-cd philo-pos-frontend-task
+cd pos-b
 
-# 2. Install dependencies
+# Install dependencies (requires Python 3.12+ and uv)
+uv sync
+
+# Run database migrations
+uv run alembic upgrade head
+
+# Start the server
+uv run python main.py
+# → API running at http://localhost:8000
+# → Swagger docs at http://localhost:8000/docs
+```
+
+### 2. Frontend Setup
+
+```bash
+cd pos-task-philo
+
+# Install dependencies
 npm install
 
-# 3. Start the development server
+# Create environment file
+echo "VITE_API_URL=http://localhost:8000/api/v1" > .env
+
+# Start the dev server
 npm run dev
+# → App running at http://localhost:5173 (or 5174 if busy)
 ```
-
-The app will be available at **http://localhost:5173**
 
 ---
 
-## Environment Variables
+## ⚙️ Configuration
 
-No `.env` file is required. The backend API base URL is configured directly in `src/lib/api.ts`:
+### API URL
 
-```ts
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+Set the API URL in `pos-task-philo/.env`:
+
+```env
+# Local backend (default)
+VITE_API_URL=http://localhost:8000/api/v1
+
+# Railway deployment (uncomment to switch)
+# VITE_API_URL=https://philo-coffee-shop-production-dd93.up.railway.app/api/v1
 ```
 
-For production, replace this value with your deployed backend URL.
+### Backend CORS
+
+Add your frontend URL to `pos-b/.env`:
+
+```env
+CORS_ORIGINS=["http://localhost:5173","http://localhost:5174"]
+```
 
 ---
 
-## How to Run Tests
+## 📁 Project Structure
+
+```
+pos-task-philo/src/
+├── pages/          # Route pages
+├── components/     # Reusable UI components
+│   ├── layout/     # AppLayout, Sidebar (mobile drawer), PageHeader
+│   ├── dashboard/  # Charts
+│   ├── orders/     # Order detail modal
+│   ├── pos/        # Menu grid, cart sidebar, add-on modal
+│   └── ui/         # Badge, Button, Card, Spinner, ErrorState
+├── hooks/          # Data fetching hooks (TanStack Query)
+│   ├── useDashboard.ts
+│   ├── useOrders.ts
+│   ├── usePOS.ts
+│   ├── useMenu.ts       ← Categories, Items, Add-ons CRUD
+│   ├── useCustomers.ts  ← Customers CRUD + order history
+│   ├── useDiscounts.ts  ← Discounts CRUD
+│   ├── useShifts.ts     ← Open/close shifts
+│   └── useExpenses.ts   ← Expenses CRUD
+├── context/        # CartContext, DateFilterContext
+├── lib/            # api.ts (Axios client + TypeScript interfaces), utils.ts
+└── styles/         # CSS files per module
+```
+
+---
+
+## ⚠️ Known Limitations
+
+| API Endpoint | Status | Note |
+|---|---|---|
+| `GET /api/v1/dashboard/profit-loss` | ⏳ Planned | Not yet shown in dashboard |
+| `GET /api/v1/dashboard/shift-summary` | ⏳ Planned | Not yet shown in dashboard |
+| `GET /api/v1/dashboard/customer-insights` | ⏳ Planned | Not yet shown in dashboard |
+| `DELETE /api/v1/orders/{id}` | ➖ Skipped | Status updates implemented instead |
+
+All other APIs are **fully integrated**.
+
+---
+
+## 📖 API Documentation
+
+With the backend running, visit: **http://localhost:8000/docs**
+
+---
+
+## 📋 Development Commands
 
 ```bash
-npm test
+# Frontend
+npm run dev       # Start dev server
+npm run build     # Production build
+npm test          # Run tests
+
+# Backend
+uv run python main.py         # Start server
+uv run alembic upgrade head   # Run migrations
 ```
-
-This runs all 3 test suites using Vitest:
-
-| Test File | What it covers |
-|---|---|
-| `tests/orderStatus.test.ts` | **Operational workflow** — validates order lifecycle transitions (pending→preparing→ready→completed, terminal states) |
-| `tests/dateFilter.test.ts` | **Dashboard logic** — verifies preset date ranges produce correct `startDate`/`endDate` strings sent to API |
-| `tests/cartCalculations.test.ts` | **UI state / business logic** — subtotal, percentage discount, flat discount, tax (8%), and total calculations |
-
----
-
-## Pages & Features
-
-### 📊 Dashboard (`/`)
-- KPI cards: Revenue, Orders, Avg Order Value, Customers
-- **6 real-time charts** (all connected to live API endpoints):
-  - Revenue Over Time (`/dashboard/revenue`)
-  - Daily Order Trends (`/dashboard/order-trends`)
-  - Top Selling Items (`/dashboard/top-items`)
-  - Payment Methods breakdown (`/dashboard/payment-breakdown`)
-  - Hourly Order Heatmap (`/dashboard/hourly-heatmap`)
-  - Revenue by Category Radar Chart (`/dashboard/top-categories`)
-- Date range filter (7D / 30D / 90D presets + custom date picker)
-- Inventory Alerts panel (`/dashboard/inventory-alerts`)
-
-### 📋 Orders (`/orders`)
-- List all orders with status, date, and payment method filters
-- Pagination with 15 orders per page
-- Click any row to open a full Order Details modal
-- Update order status via lifecycle buttons (pending → preparing → ready → completed)
-
-### 🖥️ Register — POS (`/register`)
-- Browse menu items by category
-- Click an item to open an Add-On modal (select add-ons + set quantity)
-- Cart sidebar with live totals (subtotal, discount, 8% tax, total)
-- Optional customer and discount selection
-- Payment method selector (Cash / Card / Mobile)
-- Submit order to backend and see confirmation with backend-returned totals
-
----
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── dashboard/     # DashboardCharts
-│   ├── layout/        # AppLayout, Sidebar, PageHeader
-│   ├── orders/        # OrderDetailsModal
-│   ├── pos/           # MenuGrid, CartSidebar, AddOnModal
-│   └── ui/            # Button, Card, Badge, Spinner, ErrorState, OrderStatusBadge
-├── context/           # DateFilterContext, CartContext
-├── hooks/             # useDashboard, useOrders, usePOS
-├── lib/               # api.ts (Axios client), utils.ts
-├── pages/             # Dashboard, Orders, Register
-└── styles/            # CSS per component + global index.css
-tests/
-├── setup.ts
-├── orderStatus.test.ts
-├── dateFilter.test.ts
-└── cartCalculations.test.ts
-```
-
----
-
-## Deploy to Vercel & Railway
-
-### 1. Backend (Railway)
-1. Deploy your backend repo to [Railway](https://railway.app).
-2. Once deployed, Railway will provide you with a Public URL (e.g., `https://philo-coffee-shop-production-dd93.up.railway.app`).
-
-### 2. Frontend (Vercel)
-1. Deploy this frontend repo to [Vercel](https://vercel.com).
-2. During the setup (or in **Project Settings > Environment Variables**), add the following variable:
-   - **Key**: `VITE_API_URL`
-   - **Value**: `https://philo-coffee-shop-production-dd93.up.railway.app/api/v1` (replace with your actual Railway URL).
-3. Redeploy the frontend for the changes to take effect.

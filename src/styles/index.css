@@ -85,6 +85,19 @@ button {
   flex-direction: column;
   overflow-y: auto;
   background-color: var(--bg-primary);
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+    height: 100dvh;
+  }
+
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+  }
 }
 
 /* Animations */
