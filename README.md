@@ -74,8 +74,8 @@ Set the API URL in `pos-task-philo/.env`:
 # Local backend (default)
 VITE_API_URL=http://localhost:8000/api/v1
 
-# Railway deployment (uncomment to switch)
-# VITE_API_URL=https://philo-coffee-shop-production-dd93.up.railway.app/api/v1
+# Railway deployment — set this in Vercel environment variables
+VITE_API_URL=https://pos-b-production-2ff9.up.railway.app/api/v1
 ```
 
 ### Backend CORS
